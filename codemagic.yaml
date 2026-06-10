@@ -53,12 +53,7 @@ workflows:
     name: HealthCost iOS Release Build (Signed)
     max_build_duration: 120
     instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: Codemagic
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.healthcost.optimizer
       node: latest
       xcode: latest
       cocoapods: default
@@ -86,7 +81,6 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "com.healthcost.optimizer" --type IOS_APP_STORE --create
           xcode-project use-profiles
       - name: Build iOS App (.ipa)
         script: |
