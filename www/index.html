@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>US Healthcare Cost Optimizer & Bill Auditor</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Chart.js and Tesseract.js CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">H</div>
+        <div>
+          <h2 class="logo-text">HealthCost Optimizer</h2>
+          <p style="font-size: 11px; color: var(--text-dark); margin-top: -4px;">US Healthcare Bill Auditor & Plan Simulator</p>
+        </div>
+      </div>
+      <div class="badge-demo">100% Private & Client-Side</div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Optimize Your US Healthcare Costs</h1>
+      <p>Scan previous medical bills, audit hidden charges, find billing errors, and compare health insurance options based on your exact profile and medical usage.</p>
+    </section>
+
+    <!-- Dashboard Main Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- LEFT COLUMN: Profile & Medical Bills Input -->
+      <section>
+        <!-- Card 1: User Demographics & Financials -->
+        <div class="card" style="margin-bottom: 30px;">
+          <h3 class="card-title">1. Your Profile (Subsidies & Tax brackets)</h3>
+          
+          <div class="flex-split">
+            <div class="form-group">
+              <label class="form-label" for="user-age">Age</label>
+              <input type="number" id="user-age" class="form-input" value="35" min="1" max="120">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="household-size">Household Size (Includes You)</label>
+              <input type="number" id="household-size" class="form-input" value="1" min="1" max="15">
+            </div>
+          </div>
+
+          <div class="flex-split">
+            <div class="form-group">
+              <label class="form-label" for="user-agi">Adjusted Gross Income (AGI)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="number" id="user-agi" class="form-input has-prefix" value="48000" min="0" step="1000">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="filing-status">Filing Status</label>
+              <select id="filing-status" class="form-input">
+                <option value="single" selected>Single</option>
+                <option value="married_joint">Married Filing Jointly</option>
+                <option value="head_household">Head of Household</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-split">
+            <div class="form-group">
+              <label class="form-label" for="user-state">State of Residence</label>
+              <select id="user-state" class="form-input">
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California (Mandate State)</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA" selected>Massachusetts (Mandate State)</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey (Mandate State)</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island (Mandate State)</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont (Mandate State)</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+                <option value="DC">District of Columbia (Mandate)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-zip">ZIP Code</label>
+              <input type="text" id="user-zip" class="form-input" value="02108" maxlength="5" pattern="[0-9]{5}">
+            </div>
+          </div>
+
+          <div class="flex-split">
+            <div class="form-group">
+              <label class="form-label" for="citizenship">Citizenship Status</label>
+              <select id="citizenship" class="form-input">
+                <option value="citizen" selected>US Citizen / Lawfully Present</option>
+                <option value="undocumented">Undocumented Immigrant</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="employer-offer">Employer Coverage Offered?</label>
+              <select id="employer-offer" class="form-input">
+                <option value="no" selected>No (ACA Subsidies Allowed)</option>
+                <option value="yes">Yes (Disqualifies ACA Subsidies)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-split">
+            <div class="form-group">
+              <label class="form-label" for="employment-status">Employment Type</label>
+              <select id="employment-status" class="form-input">
+                <option value="w2" selected>W-2 Employee</option>
+                <option value="self_employed">Self-Employed (Schedule 1 Deductible)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="current-coverage">Current Coverage Status</label>
+              <select id="current-coverage" class="form-input">
+                <option value="none" selected>Uninsured (No active plan)</option>
+                <option value="employer">Employer-Sponsored Plan</option>
+                <option value="marketplace">ACA Marketplace Plan</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-split">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="current-coverage-active">Is Coverage Active?</label>
+              <select id="current-coverage-active" class="form-input">
+                <option value="active" selected>Yes, currently active</option>
+                <option value="lost">No, lost / ended recently</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="hsa-contribution">Annual HSA Contribution</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="number" id="hsa-contribution" class="form-input has-prefix" value="3000" min="0" max="8550">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" id="coverage-end-date-group" style="display: none; margin-top: 20px;">
+            <label class="form-label" for="coverage-end-date">Date Coverage Ended</label>
+            <input type="date" id="coverage-end-date" class="form-input">
+            <p style="font-size: 11px; color: var(--text-dark); margin-top: 6px;">You have exactly 60 days from this date to enroll in a new plan under a Special Enrollment Period (SEP).</p>
+          </div>
+          <p style="font-size: 11px; color: var(--text-dark); margin-top: 6px;">HSA Max: $4,300 (Single) or $8,550 (Family). Requires selecting an HDHP plan to claim deductions. (CA & NJ do not allow HSA state tax deductions).</p>
+        </div>
+
+        <!-- Card 2: Medical Bill Input Tabbed -->
+        <div class="card">
+          <h3 class="card-title">2. Add Medical Bills / Expenses</h3>
+
+          <!-- Simulated Scenario Selector -->
+          <div class="form-group" style="margin-bottom: 24px;">
+            <label class="form-label" for="scenario-selector" style="color: var(--primary); font-weight: 600;">⚡ Simulate Injury / Medical Event</label>
+            <select id="scenario-selector" class="form-input" style="border-color: var(--primary-glow);">
+              <option value="" selected>Choose a simulated scenario to auto-fill...</option>
+              <option value="pregnancy">Pregnancy & Childbirth (3-Day Hospital Stay)</option>
+              <option value="knee_surgery">Knee Injury (Meniscectomy Outpatient Surgery)</option>
+              <option value="chest_pain_er">Severe Chest Pain (ER Visit & ALS Ambulance)</option>
+              <option value="preventive_wellness">Routine Annual Wellness Checkup (Healthy Base)</option>
+            </select>
+          </div>
+          
+          <div class="tab-container">
+            <button class="tab-btn active" id="tab-scan-btn">Scan Bill (OCR)</button>
+            <button class="tab-btn" id="tab-manual-btn">Manual Itemized Input</button>
+          </div>
+
+          <!-- OCR Bill Upload Pane -->
+          <div id="pane-scan">
+            <div class="upload-zone" id="drop-zone">
+              <div class="upload-icon">📷</div>
+              <h4 class="upload-text">Drag & drop your bill, click to select, or</h4>
+              <button class="btn btn-secondary" id="open-camera-btn" style="max-width: 200px; margin-top: 10px; padding: 8px 16px; font-size: 13px;">Capture with Camera</button>
+              <p class="upload-hint" style="margin-top: 8px;">Supports JPG, PNG, WEBP. Documents analyzed entirely in-browser.</p>
+              <input type="file" id="file-input" accept="image/*">
+            </div>
+
+            <!-- OCR Progress -->
+            <div class="scan-progress-container" id="scan-progress-box">
+              <span style="font-size: 14px; font-weight: 500;">Reading bill details...</span>
+              <span id="scan-percentage" style="float: right; color: var(--primary);">0%</span>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="scan-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual CPT Input Pane -->
+          <div id="pane-manual" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="cpt-selector">Common CPT / HCPCS Code Lookup</label>
+              <select id="cpt-selector" class="form-input">
+                <option value="" disabled selected>Select a common service...</option>
+              </select>
+            </div>
+
+            <!-- Custom Non-CPT Input options -->
+            <div class="form-group">
+              <label class="form-label" for="manual-cpt-code">Or Custom CPT / HCPCS Code (Optional)</label>
+              <input type="text" id="manual-cpt-code" class="form-input" placeholder="e.g. 99284">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="manual-cpt-desc">Description</label>
+              <input type="text" id="manual-cpt-desc" class="form-input" placeholder="e.g. ER Visit or Surgery Charge">
+            </div>
+            
+            <div class="flex-split">
+              <div class="form-group">
+                <label class="form-label" for="manual-frequency">Billing Frequency</label>
+                <select id="manual-frequency" class="form-input">
+                  <option value="one_time" selected>One-Time Expense</option>
+                  <option value="monthly">Monthly Recurring (Annualized)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="custom-charge">Charged Price</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix">$</span>
+                  <input type="number" id="custom-charge" class="form-input has-prefix" placeholder="0">
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 10px;">
+              <button class="btn btn-secondary" id="add-manual-item" style="height: 48px; width: 100%;">Add Line Item</button>
+            </div>
+          </div>
+
+          <!-- Bill Items List -->
+          <div style="margin-top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="font-size: 14px; color: var(--text-muted);">Items in this Medical Expense Event:</h4>
+              <button class="btn btn-secondary" id="clear-all-btn" style="padding: 4px 10px; font-size: 11px; width: auto; height: auto;">Clear All</button>
+            </div>
+            <div id="bill-items-container">
+              <div style="text-align: center; color: var(--text-dark); padding: 15px 0;" id="empty-bill-message">
+                No items added yet. Scan a bill or select a simulated scenario.
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: 16px;">
+              <span style="font-weight: 600;">Total Charges:</span>
+              <span style="font-weight: 700; color: var(--accent-red); font-size: 18px;" id="bill-total-display">$0</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: Dashboard Reports & Comparison Chart -->
+      <section>
+        
+        <!-- Card 3: Dynamic Comparison Engine -->
+        <div class="card" style="margin-bottom: 30px;">
+          <h3 class="card-title">3. Compare Insurance Options</h3>
+
+          <!-- Chart Type Toggle -->
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px;">
+            <button class="btn btn-secondary" id="chart-toggle-line" style="width: auto; padding: 6px 12px; font-size: 12px; background: rgba(56,189,248,0.2); border-color: var(--primary);">View Cost Curves (Line)</button>
+            <button class="btn btn-secondary" id="chart-toggle-bar" style="width: auto; padding: 6px 12px; font-size: 12px;">View Bill Cost Breakdown (Bar)</button>
+          </div>
+          
+          <div class="chart-container">
+            <canvas id="costChart"></canvas>
+          </div>
+
+          <!-- Dynamic Recommendations -->
+          <div id="best-plan-card"></div>
+
+          <!-- Search & Filter wrapper -->
+          <div class="plan-search-wrapper" style="margin-bottom: 16px;">
+            <input type="text" id="plan-search-input" class="form-input" placeholder="🔍 Search plans by carrier, HMO, PPO, HSA..." style="padding: 10px 14px; font-size: 14px;">
+          </div>
+
+          <!-- List of comparative plans inside scrollbox -->
+          <div class="plan-scrollbox" style="max-height: 420px; overflow-y: auto; padding-right: 5px; border: 1px solid var(--border-glass); border-radius: 16px; padding: 12px; background: rgba(15,23,42,0.3);">
+            <div class="plan-grid" id="plan-comparison-list"></div>
+          </div>
+        </div>
+
+        <!-- Card 4: Actionable Advice & Legal Timelines (V5 Swapped to 4) -->
+        <div class="card" style="margin-bottom: 30px;">
+          <h3 class="card-title" style="color: var(--accent-green);">4. Actionable Advice & Legal Timelines</h3>
+          <div id="advice-engine-card">
+            <div style="font-size: 13px; color: var(--text-muted);">
+              Add medical bill items to generate custom transition recommendations, open enrollment warnings, and pre-existing condition rights evaluation.
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: Bill Audit & Dispute Toolkit (V5 Swapped to 5) -->
+        <div class="card" style="margin-bottom: 30px;">
+          <h3 class="card-title">5. Bill Audit & Dispute Toolkit</h3>
+          
+          <div id="audit-results-container">
+            <div class="audit-item flag-success">
+              <div class="audit-icon">✅</div>
+              <div class="audit-details">
+                <h4>No billing anomalies loaded</h4>
+                <p>Add medical bills to see automated warnings about upcoding, duplicate billing, and No Surprises Act violations.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button class="btn btn-secondary" id="gen-dispute-btn" disabled>Dispute Letter</button>
+            <button class="btn btn-secondary" id="gen-charity-btn" disabled>Charity Care Letter</button>
+          </div>
+
+          <!-- Letter Editor Section -->
+          <div class="letter-section" id="letter-editor-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="font-size: 14px; color: var(--text-muted);">Letter Preview (Copy & Customize)</h4>
+              <span id="letter-eligibility-warning" style="font-size: 11px; color: var(--accent-amber);"></span>
+            </div>
+            <div class="letter-box" id="letter-content-box"></div>
+            <button class="btn" id="copy-letter-btn">Copy to Clipboard</button>
+          </div>
+        </div>
+
+        <!-- Card 6: Developer API Integration Guide -->
+        <div class="card">
+          <h3 class="card-title" style="font-size: 16px;">💻 Developer CMS API Reference</h3>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            <p style="margin-bottom: 10px;">To connect this client-side app to real-time US health plans, you can integrate the official **CMS Marketplace API**.</p>
+            <details>
+              <summary style="cursor: pointer; color: var(--primary); font-weight: 500; margin-bottom: 8px;">View Endpoint & Integration Specs</summary>
+              <p style="margin-bottom: 8px;">Register and get a token at <a href="https://developer.cms.gov/marketplace-api/" target="_blank" style="color: var(--primary); text-decoration: underline;">developer.cms.gov/marketplace-api</a>.</p>
+              
+              <!-- Live API input box (V5 New) -->
+              <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
+                <label class="form-label" for="cms-api-key-input" style="color: var(--primary);">Live CMS API Key Token</label>
+                <input type="password" id="cms-api-key-input" class="form-input" placeholder="Paste developer.cms.gov API Key here..." style="font-size: 13px;">
+                <p style="font-size: 10px; color: var(--text-dark); margin-top: 4px;">Pasting your key initiates live API fetches instead of simulated plans.</p>
+              </div>
+
+              <pre style="background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 11px; margin-top: 8px; color: #fff; border: 1px solid var(--border-glass);">
+POST https://marketplace.api.healthcare.gov/api/v1/plans/search?apikey=YOUR_KEY
+
+Request Payload:
+{
+  "household": {
+    "income": 48000,
+    "people": [
+      { "age": 35, "aptc_eligible": true }
+    ]
+  },
+  "market": "Individual",
+  "place": { "state": "MA", "zipcode": "02108" },
+  "year": 2026
+}</pre>
+            </details>
+          </div>
+        </div>
+
+        <!-- Card 7: Security & Privacy (Biometrics) -->
+        <div class="card" style="margin-top: 30px;">
+          <h3 class="card-title" style="color: var(--accent-green);">🔐 App Security & Privacy</h3>
+          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+            <p style="margin-bottom: 12px;">Ensure your personal medical bills and subsidies remain private by locking this app with your phone's biometrics.</p>
+            
+            <div class="form-group" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.4); padding: 12px; border-radius: 12px; border: 1px solid var(--border-glass);">
+              <label class="form-label" for="security-lock-toggle" style="margin-bottom: 0; cursor: pointer; color: var(--text-main);">Require Face ID / Device Passcode</label>
+              <input type="checkbox" id="security-lock-toggle" style="width: 20px; height: 20px; cursor: pointer;">
+            </div>
+            <p style="font-size: 11px; color: var(--text-dark);">When active, launching the mobile app will immediately prompt for Face ID, Touch ID, or your phone's passcode before displaying any medical information.</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Camera Capture Modal Overlay -->
+  <div id="camera-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content card">
+      <h3 class="card-title">📷 Capture Bill Snapshot</h3>
+      <div style="position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 320px; margin-bottom: 20px;">
+        <video id="webcam-stream" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+        <canvas id="snapshot-canvas" style="display: none;"></canvas>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn" id="snap-btn">Snap & Scan</button>
+        <button class="btn btn-secondary" id="close-camera-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCR Verification Review Dialog -->
+  <div id="verification-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content card" style="max-width: 600px;">
+      <h3 class="card-title">🔍 OCR Extraction Verification</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">We parsed the scanned text. Please review and adjust any codes or charges before importing.</p>
+      
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Recognized Billing Content</label>
+        <textarea id="ocr-raw-text-area" class="form-input" style="height: 100px; font-family: monospace; font-size: 11px; resize: none;" readonly></textarea>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Detected Charges (Verify & Edit Amounts)</label>
+        <div id="ocr-detected-list" style="max-height: 160px; overflow-y: auto; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px;"></div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn" id="confirm-ocr-import-btn">Verify & Import Items</button>
+        <button class="btn btn-secondary" id="cancel-ocr-import-btn">Discard Scan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom CPT Categorization Dialog -->
+  <div id="cpt-category-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content card">
+      <h3 class="card-title">⚠️ Unknown Procedure Code</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Procedure code <strong id="unknown-cpt-display">XXXXX</strong> was not found in our database. To compare this cost against Medicare averages, please select a general medical category:</p>
+      
+      <div class="form-group">
+        <label class="form-label" for="unknown-category-select">Procedure Category</label>
+        <select id="unknown-category-select" class="form-input">
+          <option value="office">General Doctor Office Visit (Avg Medicare: $110)</option>
+          <option value="surgery">Outpatient Surgical Procedure (Avg Medicare: $980)</option>
+          <option value="er">Emergency Room Visit (Avg Medicare: $260)</option>
+          <option value="imaging">Advanced Diagnostic Imaging CT/MRI (Avg Medicare: $220)</option>
+          <option value="lab">Laboratory Blood Test (Avg Medicare: $15)</option>
+          <option value="other">Other Supplies / Hydration (Avg Medicare: $100)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn" id="save-cpt-category-btn">Estimate & Add Item</button>
+        <button class="btn btn-secondary" id="cancel-cpt-category-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Face ID / Passcode Lock Screen -->
+  <div id="security-lock-screen" class="security-overlay" style="display: none;">
+    <div class="security-card card">
+      <div class="security-lock-icon">🔒</div>
+      <h2 style="font-size: 22px; margin-bottom: 8px;">HealthCost Secured</h2>
+      <p id="security-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Confirm Face ID / Passcode to access your private data.</p>
+      
+      <button class="btn" id="biometrics-unlock-btn" style="height: 52px; font-size: 15px;">
+        👤 Authenticate with Face ID / Passcode
+      </button>
+      
+      <!-- Developer Bypass Button (visible only in browser testing) -->
+      <button class="btn btn-secondary" id="dev-bypass-lock-btn" style="margin-top: 12px; font-size: 12px; height: 38px; display: none;">
+        💻 Browser Bypass (Dev Mode)
+      </button>
+    </div>
+  </div>
+
+  <!-- Load Capacitor Bridge (injected at runtime on mobile) -->
+  <script src="capacitor.js"></script>
+  <!-- Load Global Reference Scripts Sequentially -->
+  <script src="js/cpt_and_plans_data.js"></script>
+  <script src="js/math_engine.js"></script>
+  <script src="js/camera_and_ocr.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">HealthCost Optimizer</string>
+    <string name="title_activity_main">HealthCost Optimizer</string>
+    <string name="package_name">com.healthcost.optimizer</string>
+    <string name="custom_url_scheme">com.healthcost.optimizer</string>
+</resources>

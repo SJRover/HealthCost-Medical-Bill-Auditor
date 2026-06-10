@@ -1,0 +1,6 @@
+{
+  "appId": "com.healthcost.optimizer",
+  "appName": "HealthCost Optimizer",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

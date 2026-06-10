@@ -1,0 +1,25 @@
+{
+  "name": "healthcare-cost-optimizer",
+  "version": "1.0.0",
+  "description": "US Health Insurance & Medical Bill Optimizer",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y http-server www -p 8080",
+    "cap:init": "cap init",
+    "cap:sync": "cap sync",
+    "cap:add-ios": "cap add ios",
+    "cap:add-android": "cap add android",
+    "cap:open-ios": "cap open ios",
+    "cap:open-android": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capgo/capacitor-native-biometric": "^6.0.0",
+    "localtunnel": "^2.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  }
+}
