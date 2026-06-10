@@ -1,0 +1,45 @@
+# Codemagic CI/CD Build Configuration for HealthCost (iOS)
+# For documentation, see: https://docs.codemagic.io/yaml-basic/yaml-getting-started/
+
+workflows:
+  ios-capacitor-build:
+    name: HealthCost iOS Capacitor Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      node: v20.x
+      xcode: latest
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm install --strict-ssl=false
+      - name: Sync Capacitor project assets
+        script: |
+          npx cap sync ios
+      - name: Install Pod dependencies
+        script: |
+          cd ios/App && pod install
+      - name: Build iOS App (.ipa)
+        script: |
+          # Build package. If automatic signing is configured in Codemagic UI,
+          # it will sign the app. Otherwise, it compiles a debug build for testing.
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - samjo@example.com  # Codemagic will send build results here
