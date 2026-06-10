@@ -54,6 +54,9 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.healthcost.optimizer
       node: latest
       xcode: latest
       cocoapods: default
@@ -78,9 +81,11 @@ workflows:
       - name: Install Pod dependencies
         script: |
           cd ios/App && pod install
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles
       - name: Build iOS App (.ipa)
         script: |
-          # Requires Apple certificates and provisioning profiles to be configured in Codemagic UI
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
