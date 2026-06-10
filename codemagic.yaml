@@ -2,8 +2,55 @@
 # For documentation, see: https://docs.codemagic.io/yaml-basic/yaml-getting-started/
 
 workflows:
-  ios-capacitor-build:
-    name: HealthCost iOS Capacitor Build
+  ios-simulator-build:
+    name: HealthCost iOS Simulator Build (No Signing)
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      node: latest
+      xcode: latest
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm install --strict-ssl=false
+          chmod +x node_modules/.bin/* || true
+      - name: Sync Capacitor project assets
+        script: |
+          chmod +x node_modules/.bin/cap || true
+          npx cap sync ios
+      - name: Install Pod dependencies
+        script: |
+          cd ios/App && pod install
+      - name: Build Simulator App (No Signing Required)
+        script: |
+          xcodebuild -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            SYMROOT=$CM_BUILD_DIR/ios/App/build \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+      - name: Compress Simulator App for download
+        script: |
+          cd ios/App/build/Debug-iphonesimulator
+          zip -r HealthCost-Simulator.app.zip App.app
+    artifacts:
+      - ios/App/build/Debug-iphonesimulator/HealthCost-Simulator.app.zip
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-release-build:
+    name: HealthCost iOS Release Build (Signed)
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
@@ -33,15 +80,10 @@ workflows:
           cd ios/App && pod install
       - name: Build iOS App (.ipa)
         script: |
-          # Build package. If automatic signing is configured in Codemagic UI,
-          # it will sign the app. Otherwise, it compiles a debug build for testing.
+          # Requires Apple certificates and provisioning profiles to be configured in Codemagic UI
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
     artifacts:
       - ios/App/build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-    publishing:
-      email:
-        recipients:
-          - samjo@example.com  # Codemagic will send build results here
