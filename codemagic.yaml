@@ -7,7 +7,7 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      node: v20.x
+      node: latest
       xcode: latest
       cocoapods: default
       vars:
