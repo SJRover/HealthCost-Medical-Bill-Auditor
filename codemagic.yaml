@@ -82,7 +82,18 @@ workflows:
           cd ios/App && pod install
       - name: Set up code signing
         script: |
+          # Initialize keychain
           keychain initialize
+          
+          # Create provisioning profiles directory and decode the profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$CM_PROVISIONING_PROFILE" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          
+          # Decode and import the certificate
+          echo "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password "$CM_CERTIFICATE_PASSWORD"
+          
+          # Configure Xcode to use the profile
           xcode-project use-profiles
       - name: Build iOS App (.ipa)
         script: |
