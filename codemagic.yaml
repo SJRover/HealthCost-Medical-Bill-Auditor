@@ -23,8 +23,10 @@ workflows:
       - name: Install npm dependencies
         script: |
           npm install --strict-ssl=false
+          chmod +x node_modules/.bin/* || true
       - name: Sync Capacitor project assets
         script: |
+          chmod +x node_modules/.bin/cap || true
           npx cap sync ios
       - name: Install Pod dependencies
         script: |
