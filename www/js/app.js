@@ -1173,7 +1173,13 @@ function renderCostCurveChart(results, totalBill) {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            labels: { color: "#94a3b8", font: { family: "Outfit" } }
+            position: "bottom",
+            labels: {
+              color: "#94a3b8",
+              boxWidth: 10,
+              padding: 8,
+              font: { family: "Outfit", size: 9 }
+            }
           },
           tooltip: { mode: "index", intersect: false }
         },

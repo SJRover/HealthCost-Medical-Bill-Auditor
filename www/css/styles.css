@@ -733,12 +733,20 @@ select.form-input {
 }
 
 @media (max-width: 600px) {
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   .container {
     padding: 10px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   .card {
     padding: 20px 15px;
     border-radius: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   .dashboard-grid {
     gap: 20px;
@@ -748,5 +756,16 @@ select.form-input {
   }
   .hero p {
     font-size: 15px;
+  }
+  /* Enforce font size of inputs/selects on mobile to prevent iOS zooming */
+  input, select, textarea, .form-input {
+    font-size: 16px !important;
+  }
+  /* Prevent code blocks from breaking horizontal layouts */
+  pre, code {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 }
