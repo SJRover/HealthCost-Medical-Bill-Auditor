@@ -148,7 +148,7 @@ async function verifyAndConnectCMS() {
   }
 
   const liveData = await fetchCMSMarketplacePlans(key);
-  if (liveData) {
+  if (liveData && liveData.plans) {
     state.profile.cmsApiKey = key;
     localStorage.setItem("cms_api_key", key);
     if (statusElem) {
