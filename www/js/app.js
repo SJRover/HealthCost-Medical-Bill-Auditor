@@ -125,12 +125,61 @@ function getPlanColor(planId) {
   return colorMap[planId] || "#94a3b8"; // Gray fallback
 }
 
+// Verify and connect CMS API
+async function verifyAndConnectCMS() {
+  const statusElem = document.getElementById("cms-api-status");
+  const keyInput = document.getElementById("cms-api-key-input");
+  if (!keyInput) return;
+  const key = keyInput.value.trim();
+
+  if (!key) {
+    state.profile.cmsApiKey = "";
+    localStorage.removeItem("cms_api_key");
+    if (statusElem) {
+      statusElem.textContent = "";
+    }
+    updateCalculations();
+    return;
+  }
+
+  if (statusElem) {
+    statusElem.textContent = "Connecting...";
+    statusElem.style.color = "var(--primary)";
+  }
+
+  const liveData = await fetchCMSMarketplacePlans(key);
+  if (liveData) {
+    state.profile.cmsApiKey = key;
+    localStorage.setItem("cms_api_key", key);
+    if (statusElem) {
+      statusElem.textContent = "Connected ✅";
+      statusElem.style.color = "var(--accent-green)";
+    }
+    updateCalculations();
+  } else {
+    if (statusElem) {
+      statusElem.textContent = "Connection Failed ❌";
+      statusElem.style.color = "var(--accent-red)";
+    }
+  }
+}
+
 // Init Application
 document.addEventListener("DOMContentLoaded", () => {
   // V5.1: Load saved CMS API key from browser's local storage
   const savedKey = localStorage.getItem("cms_api_key");
   if (savedKey && cmsApiKeyInput) {
     cmsApiKeyInput.value = savedKey;
+    state.profile.cmsApiKey = savedKey;
+    setTimeout(() => {
+      const statusElem = document.getElementById("cms-api-status");
+      if (statusElem) {
+        statusElem.textContent = "Connected (Saved) ✅";
+        statusElem.style.color = "var(--accent-green)";
+      }
+    }, 100);
+  } else {
+    state.profile.cmsApiKey = "";
   }
 
   setupEventListeners();
@@ -145,8 +194,7 @@ function setupEventListeners() {
   const profileElements = [
     ageInput, hhInput, agiInput, stateSelect, zipInput,
     filingSelect, citizenshipSelect, employerSelect, employmentSelect,
-    currentCoverageSelect, currentActiveSelect, currentEndDateInput, hsaInput,
-    cmsApiKeyInput
+    currentCoverageSelect, currentActiveSelect, currentEndDateInput, hsaInput
   ];
 
   profileElements.forEach(elem => {
@@ -155,6 +203,27 @@ function setupEventListeners() {
       updateCalculations();
     });
   });
+
+  // CMS API Connect Button and Enter Key support
+  const connectBtn = document.getElementById("cms-connect-btn");
+  if (connectBtn) {
+    connectBtn.addEventListener("click", verifyAndConnectCMS);
+  }
+  if (cmsApiKeyInput) {
+    cmsApiKeyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        verifyAndConnectCMS();
+      }
+    });
+    cmsApiKeyInput.addEventListener("input", () => {
+      const statusElem = document.getElementById("cms-api-status");
+      if (statusElem) {
+        statusElem.textContent = "Unsaved Changes...";
+        statusElem.style.color = "var(--accent-amber)";
+      }
+    });
+  }
 
   // Toggle coverage date group visibility based on status
   currentActiveSelect.addEventListener("change", () => {
@@ -249,13 +318,9 @@ function syncProfileState() {
   state.profile.currentActive = currentActiveSelect.value;
   state.profile.coverageEndDate = currentEndDateInput.value;
   state.profile.hsaContribution = Math.max(0, parseInt(hsaInput.value) || 0);
-  state.profile.cmsApiKey = cmsApiKeyInput ? cmsApiKeyInput.value.trim() : "";
-
-  // V5.1: Persist key locally on user device
-  if (state.profile.cmsApiKey) {
-    localStorage.setItem("cms_api_key", state.profile.cmsApiKey);
-  } else {
-    localStorage.removeItem("cms_api_key");
+  // Read active CMS API key from state (updated via Connect action)
+  if (state.profile.cmsApiKey === undefined) {
+    state.profile.cmsApiKey = localStorage.getItem("cms_api_key") || "";
   }
 
   // Adjust HSA limits

@@ -377,8 +377,14 @@
               <!-- Live API input box (V5 New) -->
               <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
                 <label class="form-label" for="cms-api-key-input" style="color: var(--primary);">Live CMS API Key Token</label>
-                <input type="password" id="cms-api-key-input" class="form-input" placeholder="Paste developer.cms.gov API Key here..." style="font-size: 16px;">
-                <p style="font-size: 10px; color: var(--text-dark); margin-top: 4px;">Pasting your key initiates live API fetches instead of simulated plans.</p>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <input type="password" id="cms-api-key-input" class="form-input" placeholder="Paste developer.cms.gov API Key here..." style="font-size: 16px; flex: 1; margin-bottom: 0;">
+                  <button type="button" class="btn" id="cms-connect-btn" style="padding: 14px 24px; font-size: 14px; margin-top: 0; white-space: nowrap; border-radius: 12px; height: auto;">Connect</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                  <p style="font-size: 10px; color: var(--text-dark); margin: 0;">Pasting your key initiates live API fetches instead of simulated plans.</p>
+                  <span id="cms-api-status" style="font-size: 11px; font-weight: 600; transition: all 0.3s ease;"></span>
+                </div>
               </div>
 
               <pre style="background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 11px; margin-top: 8px; color: #fff; border: 1px solid var(--border-glass);">
